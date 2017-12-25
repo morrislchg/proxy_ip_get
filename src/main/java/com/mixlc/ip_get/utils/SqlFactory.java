@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package com.mixlc.ip_get.kuaidaili;
+package com.mixlc.ip_get.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -44,21 +44,21 @@ public class SqlFactory {
             return getSqlByMap();
         }
     }
-    public String getSqlByMap() {
+    private String getSqlByMap() {
         sqlBuffer = new StringBuffer("INSERT INTO ip_address (");
         getKeyValueBuffer();
         sqlBuffer.append(keyBuffer).append(") values(").append(valueBuffer).append("on duplicate key update ip = values(ip)");
         return sqlBuffer.toString();
     }
 
-    public String getSqlListMap() {
+    private String getSqlListMap() {
         sqlBuffer = new StringBuffer("INSERT INTO ip_address ");
         getSqlBuffer();
         sqlBuffer.append(keyBuffer).append(" values").append(valueBuffer).append("on duplicate key update ip = values(ip)");
         return sqlBuffer.toString();
     }
 
-    public void getKeyValueBuffer() {
+    private void getKeyValueBuffer() {
         Iterator<Map.Entry<String, String>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<String, String> entry = iterator.next();
@@ -71,7 +71,7 @@ public class SqlFactory {
         }
     }
 
-    public void getSqlBuffer() {
+    private void getSqlBuffer() {
         keyBuffer.append("(");
         Map<String,String> keymap = maplist.get(0);
         Iterator<String> iterator = keymap.keySet().iterator();
@@ -88,7 +88,7 @@ public class SqlFactory {
         getValueBufferByKeyList(keylist);
     }
 
-    public void getValueBufferByKeyList(List<String> keylist) {
+    private void getValueBufferByKeyList(List<String> keylist) {
         int j = 0;
         for (Map<String, String> entrymap : maplist) {
             if (j != 0) {

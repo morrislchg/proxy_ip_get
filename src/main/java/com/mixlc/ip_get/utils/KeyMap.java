@@ -8,7 +8,7 @@
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package com.mixlc.ip_get.kuaidaili;
+package com.mixlc.ip_get.utils;
 
 import java.util.HashMap;
 import java.util.Map;
