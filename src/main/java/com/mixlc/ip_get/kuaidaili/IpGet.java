@@ -10,13 +10,14 @@
  */
 package com.mixlc.ip_get.kuaidaili;
 
+import com.mixlc.ip_get.mysql.MysqlDriver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -27,6 +28,7 @@ import java.util.Iterator;
  * @since 1.0.0
  */
 public class IpGet {
+    public final static Map<String,String> keyMap = KeyMap.getKeyMap();
     public void getDomByUrl(String url){
         try {
             Document doc = Jsoup.connect(url).get();
@@ -39,16 +41,31 @@ public class IpGet {
     }
     public void getRow(Elements elements){
         Iterator it = elements.iterator();
+        List<Map<String,String>> list = new ArrayList<Map<String,String>>();
         while (it.hasNext()){
             Element element = (Element) it.next();
             Elements cols = element.select("td");
-            getColumn(cols);
+            Map<String,String> row = getColumn(cols);
+            list.add(row);
         }
+        SqlFactory sqlFactory = new SqlFactory(list);
+        String sql = sqlFactory.getSql();
+        MysqlDriver mysqlDriver = new MysqlDriver();
+        mysqlDriver.sqlEecute(sql);
+        System.out.println(Arrays.deepToString(list.toArray()));
     }
-    public void getColumn(Elements cols){
+    public Map<String,String> getColumn(Elements cols){
         Iterator iterator = cols.iterator();
+        Map<String,String> row = new HashMap<String, String>();
         while (iterator.hasNext()){
             Element element1 = (Element) iterator.next();
+            String key = getKeyByDataTitle(element1.attr("data-title"));
+            String value = element1.text();
+            row.put(key,value);
         }
+        return row;
+    }
+    public String getKeyByDataTitle(String data_title){
+        return keyMap.get(data_title);
     }
 }
