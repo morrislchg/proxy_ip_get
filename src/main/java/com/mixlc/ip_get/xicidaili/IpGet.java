@@ -1,14 +1,14 @@
 /**
  * Copyright (C), 2017-2017, lc
- * FileName: ip_get
+ * FileName: IpGet
  * Author:   mixlc
- * Date:     2017/12/25 0025 14:42
- * Description: 云代理获取代理ip
+ * Date:     2017/12/26 0026 17:02
+ * Description: 西刺
  * History:
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package com.mixlc.ip_get.yundaili;
+package com.mixlc.ip_get.xicidaili;
 
 import com.mixlc.ip_get.mysql.MysqlDriver;
 import com.mixlc.ip_get.utils.IpTest;
@@ -24,43 +24,42 @@ import java.util.*;
 
 /**
  * 〈一句话功能简述〉<br> 
- * 〈云代理获取代理ip〉
+ * 〈西刺〉
  *
  * @author mixlc
- * @create 2017/12/25 0025
+ * @create 2017/12/26 0026
  * @since 1.0.0
  */
-public class ip_get {
+public class IpGet {
     public final static Map<String,String> keyMap = KeyMap.getKeyMap();
-    private List<String> keylist = new ArrayList<String>();
     public void getDomByUrl(String url){
         try {
             Document doc = Jsoup.connect(url).get();
-            Elements elements = doc.getElementById("list").child(0).getElementsByTag("tbody").eq(0).select("tr");
-            Elements thead = doc.getElementById("list").child(0).getElementsByTag("thead").select("tr").select("th");
-            getHead(thead);
+            Elements elements = doc.getElementById("ip_list").getElementsByTag("tbody").eq(0).select("tr");
+          //  System.out.println(elements);
             getRow(elements);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void getHead(Elements elements){
-        Iterator it = elements.iterator();
-        while(it.hasNext()){
-            Element element = (Element) it.next();
-            keylist.add(element.text());
-        }
-    }
-    private void getRow(Elements elements){
+    public void getRow(Elements elements){
         Iterator it = elements.iterator();
         List<Map<String,String>> list = new ArrayList<Map<String,String>>();
+        int i=0;
         while (it.hasNext()){
+            if(i==0){
+                i++;
+                it.next();
+                continue;
+            }
+            System.out.println("xxxx");
             Element element = (Element) it.next();
             Elements cols = element.select("td");
             Map<String,String> row = getColumn(cols);
+            System.out.println(row);
             list.add(row);
+            i++;
         }
-     //   List<Map<String,String>> list1 = getUsefulIp(list);
         SqlFactory sqlFactory = new SqlFactory(list);
         String sql = sqlFactory.getSql();
         MysqlDriver mysqlDriver = new MysqlDriver();
@@ -73,24 +72,22 @@ public class ip_get {
         int i=0;
         while (iterator.hasNext()){
             Element element1 = (Element) iterator.next();
-            String key = getKeyByDataTitle(keylist.get(i));
-            String value = element1.text();
-            row.put(key,value);
+            if(i==1){
+                String key = "ip";
+                String value = element1.text();
+                row.put(key,value);
+            }else if(i==2){
+                String key = "port";
+                String value = element1.text();
+                row.put(key,value);
+            }else if(i==0){
+                i++;
+                continue;
+            }else{
+                break;
+            }
             i++;
         }
         return row;
-    }
-    public String getKeyByDataTitle(String data_title){
-        return keyMap.get(data_title);
-    }
-    public List<Map<String,String>> getUsefulIp(List<Map<String,String>> list){
-        List<Map<String,String>> list1 = new ArrayList<Map<String, String>>();
-        for(int i=0;i<list.size();i++){
-            Map<String,String> map = list.get(i);
-            if(IpTest.testIp(map.get("ip"),map.get("port"))){
-                list1.add(map);
-            }
-        }
-        return list1;
     }
 }

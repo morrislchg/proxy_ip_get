@@ -34,16 +34,4 @@ public class ip_getTest {
             ipGet.getDomByUrl(url);
         }
     }
-    @Test
-    public void getHead(){
-        String url = "http://www.ip3366.net/free/?stype=1&page=i";
-        try {
-            Document doc = Jsoup.connect(url).get();
-            Elements thead = doc.getElementById("list").child(0).getElementsByTag("thead").select("tr").select("th");
-            System.out.println(thead);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 }

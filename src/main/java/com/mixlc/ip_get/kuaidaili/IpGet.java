@@ -11,6 +11,7 @@
 package com.mixlc.ip_get.kuaidaili;
 
 import com.mixlc.ip_get.mysql.MysqlDriver;
+import com.mixlc.ip_get.utils.IpTest;
 import com.mixlc.ip_get.utils.KeyMap;
 import com.mixlc.ip_get.utils.SqlFactory;
 import org.jsoup.Jsoup;
@@ -49,6 +50,7 @@ public class IpGet {
             Map<String,String> row = getColumn(cols);
             list.add(row);
         }
+     //   List<Map<String,String>> list1 = getUsefulIp(list);
         SqlFactory sqlFactory = new SqlFactory(list);
         String sql = sqlFactory.getSql();
         MysqlDriver mysqlDriver = new MysqlDriver();
@@ -68,5 +70,15 @@ public class IpGet {
     }
     public String getKeyByDataTitle(String data_title){
         return keyMap.get(data_title);
+    }
+    public List<Map<String,String>> getUsefulIp(List<Map<String,String>> list){
+        List<Map<String,String>> list1 = new ArrayList<Map<String, String>>();
+        for(int i=0;i<list.size();i++){
+            Map<String,String> map = list.get(i);
+            if(IpTest.testIp(map.get("ip"),map.get("port"))){
+                list1.add(map);
+            }
+        }
+        return list1;
     }
 }

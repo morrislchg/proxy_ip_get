@@ -33,4 +33,10 @@ public class KeyMap {
         map.put("最后验证时间","validate_time");
         return map;
     }
+    public static Map<String,String> getXiCiMap(){
+        Map<String,String> map = new HashMap<String, String>();
+        map.put("IP地址","ip");
+        map.put("端口","port");
+        return map;
+    }
 }
