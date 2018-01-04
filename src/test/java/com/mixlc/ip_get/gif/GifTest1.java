@@ -53,9 +53,9 @@ public class GifTest1 {
         }
     } @Test
     public void gif4jTest1(){
-       String gifName = "m_5ae599b1b091201c.gif";
+       String gifName = "m_0aeab1984a7ec77e.gif";
       //  String gifName = "test.gif";
-        String path = "C:\\Users\\Administrator\\Desktop\\testimg\\";
+        String path = "C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue\\";
         File file = new File(path+gifName);
 
         GifImage srcImage = null;

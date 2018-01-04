@@ -73,6 +73,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/gif4j.jar</systemPath>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.testng/testng -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.13.1</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>
