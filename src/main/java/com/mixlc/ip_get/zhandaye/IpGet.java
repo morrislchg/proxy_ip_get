@@ -184,6 +184,7 @@ public class IpGet {
             imageOutput.write(data, 0, data.length);
             imageOutput.close();
         } catch(Exception ex) {
+            System.out.println("创建图片异常===============");
             System.out.println("Exception: " + ex);
             ex.printStackTrace();
         }

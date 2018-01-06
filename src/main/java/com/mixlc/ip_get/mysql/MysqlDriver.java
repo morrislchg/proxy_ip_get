@@ -44,6 +44,7 @@ public class MysqlDriver {
             statement.execute(sql);
         } catch (SQLException e) {
             e.printStackTrace();
+            System.out.println(sql);
         }
     }
     public ResultSet executeQuery(String sql){

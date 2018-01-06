@@ -46,6 +46,7 @@ public class GetCodeByImage {
         return this.bufferedImage.getWidth()+"_"+this.bufferedImage.getHeight();
     }
     public void fileToImageBuffer() throws IOException {
+        System.out.printf(file.getPath());
         BufferedImage image = ImageIO.read(file);
         this.bufferedImage = image;
     }
