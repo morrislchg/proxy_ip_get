@@ -11,7 +11,9 @@
 package com.mixlc.ip_get.zhandaye;
 
 import com.mixlc.ip_get.mysql.MysqlDriver;
+import com.mixlc.ip_get.utils.GetCodeByImage;
 import com.mixlc.ip_get.utils.SqlFactory;
+import com.mixlc.ip_get.utils.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -78,10 +80,10 @@ public class IpGet {
             Element element = (Element) it.next();
             Elements cols = element.select("td");
             Map<String,String> row = getColumn(cols);
-      //      list.add(row);
+           list.add(row);
             i++;
         }
-       // saveRows(list);
+        saveRows(list);
     }
     public void saveRows(List<Map<String,String>> list){
         SqlFactory sqlFactory = new SqlFactory(list);
@@ -95,7 +97,7 @@ public class IpGet {
         int i=0;
         while (iterator.hasNext()){
             Element element1 = (Element) iterator.next();
-            if(i==1){
+            if(i==0){
                 String key = "ip";
                 String value = element1.text();
                 row.put(key,value);
@@ -104,13 +106,10 @@ public class IpGet {
                 String value = element1.getElementsByTag("img").eq(0).attr("abs:src");
 //                System.out.println("http://ip.zdaye.com/"+value);
                 try {
-                    downloadImages(value);
+                    row.put(key,downloadImages(value));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
-
-              //  row.put(key,value);
             }else{
                 i++;
                 continue;
@@ -119,9 +118,10 @@ public class IpGet {
         }
         return row;
     }
-    public void downloadImages(String url){
-        url = url.replaceAll("\\\\n","");
+    public String downloadImages(String url){
+        url = StringUtils.replaceBlank(url);
         System.out.println(url);
+        String code = "0";
         Connection conn = Jsoup.connect(url);
         conn.header("Host","ip.zdaye.com");
         conn.header("Connection","keep-alive");
@@ -142,22 +142,54 @@ public class IpGet {
             e.printStackTrace();
         }
         byte[] img = response.bodyAsBytes();
-        byteToImage(img,"C:\\Users\\Administrator\\Desktop\\imgs\\"+getNameByPath(url));
-        System.out.println(img.length);
+       // byteToImage(img,"C:\\Users\\Administrator\\Desktop\\imgs\\"+getNameByPath(url));
+        try {
+           File file =  byteToImage(img,getNameByPath(url));
+           if(file!=null){
+               GetCodeByImage getCodeByImage = new GetCodeByImage(file);
+               String str =  getCodeByImage.getCode();
+               if(str!=null){
+                   code = str;
+               }
+           }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return code;
     }
-    public void byteToImage(byte[] data,String path){
-        if(data.length<3||path.equals("")) return;
+//    public void byteToImage(byte[] data,String path){
+//        if(data.length<3||path.equals("")) return;
+//        try{
+//            FileImageOutputStream imageOutput = new FileImageOutputStream(new File(path));
+//            imageOutput.write(data, 0, data.length);
+//            imageOutput.close();
+//            System.out.println("Make Picture success,Please find image in " + path);
+//        } catch(Exception ex) {
+//            System.out.println("Exception: " + ex);
+//            ex.printStackTrace();
+//        }
+//    }
+    public File byteToImage(byte[] data,String name) throws IOException {
+        if(data.length<3||name.equals("")) return null;
+        File file = File.createTempFile(getPreName(name),getSubfixName(name));
+        file.deleteOnExit();
         try{
-            FileImageOutputStream imageOutput = new FileImageOutputStream(new File(path));
+            FileImageOutputStream imageOutput = new FileImageOutputStream(file);
             imageOutput.write(data, 0, data.length);
             imageOutput.close();
-            System.out.println("Make Picture success,Please find image in " + path);
         } catch(Exception ex) {
             System.out.println("Exception: " + ex);
             ex.printStackTrace();
         }
+        return file;
     }
     public String getNameByPath(String path){
         return path.substring(path.indexOf("m_"),path.indexOf("?"));
+    }
+    public String getPreName(String name){
+        return name.substring(0,name.lastIndexOf("."));
+    }
+    public String getSubfixName(String name){
+        return name.substring(name.lastIndexOf("."),name.length());
     }
 }

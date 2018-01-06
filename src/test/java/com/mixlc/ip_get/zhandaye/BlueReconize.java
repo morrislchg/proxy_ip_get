@@ -11,7 +11,6 @@
 package com.mixlc.ip_get.zhandaye;
 
 import com.mixlc.ip_get.utils.BmpReader;
-import com.mixlc.ip_get.utils.GifDecoder;
 import com.mixlc.ip_get.utils.ImageProgress;
 import org.junit.Test;
 
@@ -19,11 +18,9 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -34,7 +31,7 @@ import java.util.Random;
  * @since 1.0.0
  */
 public class BlueReconize {
-
+    Map<BufferedImage,String> trainMap = null;
     @Test
     public void testBlueReco() throws Exception {
 //        File testDataDir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue");
@@ -48,7 +45,7 @@ public class BlueReconize {
         File baseDir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue\\pic\\");
         for(File file:baseDir.listFiles()){
             String filepath = file.getPath();
-            String jpgpath = getJpgPathByFile(file)+getjpgNameByFileName(file.getName());
+            String jpgpath = getJpgPathByFile(file)+getJpgOraginalFileName(file.getName());
             BmpReader.bmpTojpg(filepath,jpgpath);
             cleanLinesInImage(new File(jpgpath), getJpgBlackPathByFile(file));
             BufferedImage bufferedImage = getBufferedImageByPath(getBackFilePathByFile(file));
@@ -62,6 +59,174 @@ public class BlueReconize {
             }
         }
     }
+    public void getBlackImage() throws IOException {
+        File baseDir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue\\test");
+        for(File file:baseDir.listFiles()) {
+            String filepath = file.getPath();
+            String jpgpath = getJpgPathByFile(file) + getJpgOraginalFileName(file.getName());
+            BmpReader.bmpTojpg(filepath, jpgpath);
+            cleanLinesInImage(new File(jpgpath), getJpgBlackPathByFile(file));
+        }
+    }
+    @Test
+    public void getSingleCharOcr() throws Exception {
+        getBlackImage();
+        Map<BufferedImage,String> map = loadTrainData();
+        File baseDir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue\\black\\");
+        for(File file:baseDir.listFiles()){
+            BufferedImage bufferedImage = getBufferedImageByPath(file.getPath());
+            List<BufferedImage> list = ImageProgress.splitImage(bufferedImage);
+            String result = "";
+            for (BufferedImage bi : list) {
+                result += getSingleCharOcr(bi, map);
+            }
+            String timestamp = String.valueOf(new Date().getTime());
+            File file1 = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue\\rename\\"+timestamp+"_"+result+".jpg");
+            ImageIO.write(bufferedImage,"jpeg",file1);
+        }
+    }
+    public int isBlack_1(int colorInt) {
+        Color color = new Color(colorInt);
+        if (color.getRed() + color.getGreen() + color.getBlue() <= 300) {
+            return 1;
+        }
+        return 0;
+    }
+    public boolean isNotEight(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        int minCount = width;
+        for (int y = height / 2 - 2; y < height / 2 + 2; ++y) {
+            int count = 0;
+            for (int x = 0; x < width / 2 + 2; ++x) {
+                if (isBlack_1(img.getRGB(x, y)) == 1) {
+                    count++;
+                }
+            }
+            minCount = Math.min(count, minCount);
+        }
+        return minCount < 2;
+    }
+
+    public boolean isNotThree(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        int minCount = width;
+        for (int y = height / 2 - 3; y < height / 2 + 3; ++y) {
+            int count = 0;
+            for (int x = 0; x < width / 2 + 1; ++x) {
+                if (isBlack_1(img.getRGB(x, y)) == 1) {
+                    count++;
+                }
+            }
+            minCount = Math.min(count, minCount);
+        }
+        return minCount > 0;
+    }
+
+    public boolean isNotFive(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        int minCount = width;
+        for (int y = 0; y < height / 3; ++y) {
+            int count = 0;
+            for (int x = width * 2 / 3; x < width; ++x) {
+                if (isBlack_1(img.getRGB(x, y)) == 1) {
+                    count++;
+                }
+            }
+            minCount = Math.min(count, minCount);
+        }
+        return minCount > 0;
+    }
+    public int getBlackCount(BufferedImage img) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        int count = 0;
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+                if (isBlack_1(img.getRGB(x, y)) == 1) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+    public String getSingleCharOcr(BufferedImage img,
+                                          Map<BufferedImage, String> map) throws Exception {
+        String result = "#";
+        int width = img.getWidth();
+        int height = img.getHeight();
+        int min = width * height;
+        boolean bNotEight = isNotEight(img);
+        boolean bNotThree = isNotThree(img);
+        boolean bNotFive = isNotFive(img);
+        for (BufferedImage bi : map.keySet()) {
+            if (bNotThree && map.get(bi).startsWith("3"))
+                continue;
+            if (bNotEight && map.get(bi).startsWith("8"))
+                continue;
+            if (bNotFive && map.get(bi).startsWith("5"))
+                continue;
+            double count1 = getBlackCount(img);
+            double count2 = getBlackCount(bi);
+            if (Math.abs(count1 - count2) / Math.max(count1, count2) > 0.25)
+                continue;
+            int count = 0;
+            if (width < bi.getWidth() && height < bi.getHeight()) {
+                for (int m = 0; m <= bi.getWidth() - width; m++) {
+                    for (int n = 0; n <= bi.getHeight() - height; n++) {
+                        Label1: for (int x = m; x < m + width; ++x) {
+                            for (int y = n; y < n + height; ++y) {
+                                if (isWhite(img.getRGB(x - m, y - n)) != isWhite(bi
+                                        .getRGB(x, y))) {
+                                    count++;
+                                    if (count >= min)
+                                        break Label1;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                int widthmin = width < bi.getWidth() ? width : bi.getWidth();
+                int heightmin = height < bi.getHeight() ? height : bi
+                        .getHeight();
+                Label1: for (int x = 0; x < widthmin; ++x) {
+                    for (int y = 0; y < heightmin; ++y) {
+                        if (isWhite(img.getRGB(x, y)) != isWhite(bi
+                                .getRGB(x, y))) {
+                            count++;
+                            if (count >= min)
+                                break Label1;
+                        }
+                    }
+                }
+            }
+            if (count < min) {
+                min = count;
+                result = map.get(bi);
+            }
+        }
+        return result;
+    }
+    public Map<BufferedImage,String> loadTrainData() throws IOException {
+        if (trainMap == null) {
+            Map<BufferedImage, String> map = new HashMap<BufferedImage, String>();
+            File dir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue\\single\\");
+            File[] files = dir.listFiles();
+            for (File file : files) {
+                String name = file.getName();
+                File[] files1 = file.listFiles();
+                for(File file1:files1){
+                    map.put(ImageIO.read(file1), name);
+                }
+            }
+            trainMap = map;
+        }
+        return trainMap;
+    }
+
     public String getSingleNumberPath(File file,int i){
         Date date = new Date();
         String spname = String.valueOf(date.getTime());
@@ -72,6 +237,10 @@ public class BlueReconize {
         String name = filename.substring(filename.lastIndexOf("_")+1,filename.lastIndexOf(".")) + ".jpg";
         return name;
     }
+    public String getJpgOraginalFileName(String filename){
+        String name = filename.substring(0,filename.lastIndexOf(".")) + ".jpg";
+        return name;
+    }
     public String getJpgPathByFile(File file){
         return file.getParentFile().getParentFile().getPath()+"\\jpgs\\";
     }
@@ -79,7 +248,7 @@ public class BlueReconize {
         return file.getParentFile().getParentFile().getPath()+"\\black\\";
     }
     public String getBackFilePathByFile(File file){
-        return getJpgBlackPathByFile(file)+getjpgNameByFileName(file.getName());
+        return getJpgBlackPathByFile(file)+getJpgOraginalFileName(file.getName());
     }
     public BufferedImage getBufferedImageByPath(String path) throws IOException {
         File file  = new File(path);
