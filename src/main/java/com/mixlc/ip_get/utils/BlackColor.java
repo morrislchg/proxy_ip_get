@@ -61,9 +61,14 @@ public class BlackColor {
         List<BufferedImage> list = splitImage(bufferedImage);
         Map<BufferedImage,String> map = getTrainMap();
         String result = "";
-        for (BufferedImage bi : list) {
-            result += getSingleCharOcr(bi, map);
+        try{
+            for (BufferedImage bi : list) {
+                result += getSingleCharOcr(bi, map);
+            }
+        }catch (Exception e){
+            result = "0";
         }
+
         return result;
     }
     public String getSingleCharOcr(BufferedImage img,
@@ -95,7 +100,8 @@ public class BlackColor {
     public Map<BufferedImage,String> getTrainMap() throws IOException {
         if (trainMap == null) {
             Map<BufferedImage, String> map = new HashMap<BufferedImage, String>();
-            File dir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\新建文件夹\\");
+            String path = PathUtils.getBlackPath();
+            File dir = new File(path);
             File[] files = dir.listFiles();
             for (File file : files) {
                 map.put(ImageIO.read(file), file.getName().charAt(0) + "");

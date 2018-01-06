@@ -52,7 +52,8 @@ public class BlueCode {
     public Map<BufferedImage,String> loadTrainData() throws IOException {
         if (trainMap == null) {
             Map<BufferedImage, String> map = new HashMap<BufferedImage, String>();
-            File dir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue\\single\\");
+            String path = PathUtils.getBluePath();
+            File dir = new File(path);
             File[] files = dir.listFiles();
             for (File file : files) {
                 String name = file.getName();

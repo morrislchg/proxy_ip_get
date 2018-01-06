@@ -80,6 +80,7 @@ public class IpGet {
             Element element = (Element) it.next();
             Elements cols = element.select("td");
             Map<String,String> row = getColumn(cols);
+            System.out.println(row.toString());
            list.add(row);
             i++;
         }
@@ -89,7 +90,12 @@ public class IpGet {
         SqlFactory sqlFactory = new SqlFactory(list);
         String sql = sqlFactory.getSql();
         MysqlDriver mysqlDriver = new MysqlDriver();
-        mysqlDriver.sqlEecute(sql);
+        try{
+            mysqlDriver.sqlEecute(sql);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
     public Map<String,String> getColumn(Elements elements){
         Iterator iterator = elements.iterator();
@@ -191,5 +197,10 @@ public class IpGet {
     }
     public String getSubfixName(String name){
         return name.substring(name.lastIndexOf("."),name.length());
+    }
+
+
+    public static void main(String[] args) {
+        System.out.println(IpGet.class.getClassLoader().getResource("").getPath());
     }
 }

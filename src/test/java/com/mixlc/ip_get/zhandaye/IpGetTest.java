@@ -366,4 +366,8 @@ public class IpGetTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void getResource(){
+
+    }
 }
