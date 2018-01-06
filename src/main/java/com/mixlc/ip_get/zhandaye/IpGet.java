@@ -178,9 +178,10 @@ public class IpGet {
     public File byteToImage(byte[] data,String name) throws IOException {
         if(data.length<3||name.equals("")) return null;
         File file = File.createTempFile(getPreName(name),getSubfixName(name));
-        file.deleteOnExit();
+     //   file.deleteOnExit();
         try{
             FileImageOutputStream imageOutput = new FileImageOutputStream(file);
+            System.out.println(file.getPath());
             imageOutput.write(data, 0, data.length);
             imageOutput.close();
         } catch(Exception ex) {
