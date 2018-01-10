@@ -142,6 +142,9 @@ public class BlackColor {
             int count = 0;
             int widthmin = width < bi.getWidth() ? width : bi.getWidth();
             int heightmin = height < bi.getHeight() ? height : bi.getHeight();
+            if(!sizeMatch(img,bi)){
+                continue;
+            }
             Label1: for (int x = 0; x < widthmin; ++x) {
                 for (int y = 0; y < heightmin; ++y) {
                     if (isWhite(img.getRGB(x, y)) != isWhite(bi.getRGB(x, y))) {
@@ -157,6 +160,20 @@ public class BlackColor {
             }
         }
         return result;
+    }
+    // 计算 尺寸匹配度如果尺寸差别过大直接pass
+    public boolean sizeMatch(BufferedImage souce,BufferedImage target){
+        int width = souce.getWidth();
+        int height = souce.getHeight();
+        int bw = width < target.getWidth() ? target.getWidth()/width : width/target.getWidth();
+        if(bw>2){
+            return false;
+        }
+        int hw = height < target.getHeight() ? target.getWidth()/height : height/target.getWidth();
+        if(hw>2){
+            return false;
+        }
+        return true;
     }
     public Map<BufferedImage,String> getTrainMap() throws IOException {
         if (trainMap == null) {
