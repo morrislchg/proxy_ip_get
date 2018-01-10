@@ -10,7 +10,10 @@
  */
 package com.mixlc.ip_get.zhandaye;
 
+import com.mixlc.ip_get.mysql.MysqlDriver;
+import com.mixlc.ip_get.utils.CheckIp;
 import com.mixlc.ip_get.utils.ImageUtil2;
+import com.mixlc.ip_get.utils.IpTest;
 import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.sun.imageio.plugins.gif.GIFImageWriter;
@@ -30,10 +33,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.Buffer;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -50,6 +56,37 @@ public class IpGetTest {
         IpGet ipGet = new IpGet(url);
         ipGet.getIps();
     }
+    @Test
+    public void testIpUseful(){
+        String sql = "select t.ip,t.port from ip_address t";
+        MysqlDriver mysqlDriver = new MysqlDriver();
+        try{
+            List<Map<String,String>> result = mysqlDriver.executeQuery(sql);
+            int i=0;
+            for(Map<String,String> map:result){
+                try{
+                    boolean mapresult = CheckIp.checkProxyIpOneByOne(map,"http://www.blogjava.net/zjusuyong/articles/304788.html");
+                    if(mapresult){
+                        i++;
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+            }
+            BigDecimal sbig = new BigDecimal(result.size());
+            BigDecimal ubig = new BigDecimal(i);
+            BigDecimal thund = new BigDecimal(100);
+            if(i>0){
+                ubig = ubig.divide(sbig,4,BigDecimal.ROUND_HALF_UP).multiply(thund);
+            }
+            System.out.println("共有ip:"+result.size()+"个   有效个数:"+i+"有效率为："+ubig.toString()+"%");
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
     @Test
     public void oragnizeImagesBySize(){
         File dir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\");

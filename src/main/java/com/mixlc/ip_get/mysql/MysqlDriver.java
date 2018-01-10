@@ -47,15 +47,25 @@ public class MysqlDriver {
             System.out.println(sql);
         }
     }
-    public ResultSet executeQuery(String sql){
+    public List<Map<String,String>> executeQuery(String sql){
         Statement statement = getStatement();
         ResultSet resultSet = null;
+        List<Map<String,String>> list = new ArrayList<Map<String, String>>();
         try {
             resultSet = statement.executeQuery(sql);
+            ResultSetMetaData metaData= resultSet.getMetaData();
+            int col = metaData.getColumnCount();
+            while (resultSet.next()){
+                Map<String,String> map = new HashMap<String, String>();
+                for(int i=1;i<=col;i++){
+                    map.put(metaData.getColumnName(i),resultSet.getString(i));
+                }
+                list.add(map);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return resultSet;
+        return list;
     }
 
 }

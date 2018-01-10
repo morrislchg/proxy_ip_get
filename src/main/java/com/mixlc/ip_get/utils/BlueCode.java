@@ -10,14 +10,15 @@
  */
 package com.mixlc.ip_get.utils;
 
+import org.apache.commons.io.FileUtils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 import static com.mixlc.ip_get.ImageProProgress.ImagePreProcess3.getSingleCharOcr;
 
@@ -31,6 +32,7 @@ import static com.mixlc.ip_get.ImageProProgress.ImagePreProcess3.getSingleCharOc
  */
 public class BlueCode {
     private File file;
+    private boolean testflag = false;
     private Map<BufferedImage,String> trainMap = null;
     public BlueCode(File file) {
         this.file = file;
@@ -39,15 +41,67 @@ public class BlueCode {
         String filepath = file.getPath();
         String jpgpath = getJpgOraginalFileName(file.getName());
         File jpgfile = File.createTempFile(getPreName(jpgpath),getSubfixName(jpgpath));
+        jpgfile.deleteOnExit();
         BmpReader.bmpTojpg(filepath, jpgfile.getPath());
         BufferedImage bufferedImage = cleanLinesInImage(jpgfile);
         Map<BufferedImage,String> map = loadTrainData();
         List<BufferedImage> list = ImageProgress.splitImage(bufferedImage);
         String result = "";
         for (BufferedImage bi : list) {
+            if(testflag){
+                saveSinglecode(bi);
+            }
+            saveSinglecode1(bi);
             result += getSingleCharOcr(bi, map);
         }
+        if(testflag){
+            saveJpg(jpgfile,result);
+        }
+        saveJpg1(jpgfile,result);
         return result;
+    }
+    public void saveSinglecode(BufferedImage bi) throws IOException {
+        System.out.println("==========================================");
+        System.out.println("11111111111111111111111");
+        Date date = new Date();
+        Random random = new Random();
+        String preName = String.valueOf(date.getTime()) +"_"+ random.nextInt(47);
+        System.out.println(preName);
+        File file2 = new File(file.getParentFile().getPath()+"\\"+getFileName()+"\\"+preName+".jpg");
+        if(!file2.exists()){
+            file2.mkdirs();
+        }
+        ImageIO.write(bi, "jpeg", file2);
+    }
+    public void saveSinglecode1(BufferedImage bi) throws IOException {
+        System.out.println("==========================================");
+        System.out.println("11111111111111111111111");
+        Date date = new Date();
+        Random random = new Random();
+        String preName = String.valueOf(date.getTime()) +"_"+ random.nextInt(47);
+        System.out.println(preName);
+        File file2 = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a"+"\\"+getFileName()+"\\"+preName+".jpg");
+        if(!file2.exists()){
+            file2.mkdirs();
+        }
+        ImageIO.write(bi, "jpeg", file2);
+    }
+    public String getFileName(){
+        String fileName = this.file.getName();
+        fileName = fileName.substring(0,fileName.indexOf("."));
+        return fileName;
+    }
+    public void saveJpg(File jpgFile,String result){
+        Date date = new Date();
+        String preName = String.valueOf(date.getTime());
+        File file2 = new File(jpgFile.getParentFile().getPath()+"\\"+getFileName()+"\\"+preName+"_"+result+".jpg");
+        jpgFile.renameTo(file2);
+    }
+    public void saveJpg1(File jpgFile,String result) throws IOException {
+        Date date = new Date();
+        String preName = String.valueOf(date.getTime());
+        File file2 = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a"+"\\"+getFileName()+"\\"+preName+"_"+result+".jpg");
+        FileUtils.copyFile(jpgFile,file2);
     }
     public Map<BufferedImage,String> loadTrainData() throws IOException {
         if (trainMap == null) {
@@ -132,9 +186,9 @@ public class BlueCode {
                 boolean flag = false ;
                 if(isBlack(binaryBufferedImage.getRGB(x, y))){
                     //左右均为空时，去掉此点
-//                    if(isWhite(binaryBufferedImage.getRGB(x-1, y)) && isWhite(binaryBufferedImage.getRGB(x+1, y))){
-//                        flag = true;
-//                    }
+                    if(isWhite(binaryBufferedImage.getRGB(x-1, y)) && isWhite(binaryBufferedImage.getRGB(x+1, y))){
+                        flag = true;
+                    }
                     //上下均为空时，去掉此点
                     if(isWhite(binaryBufferedImage.getRGB(x, y+1)) && isWhite(binaryBufferedImage.getRGB(x, y-1))){
                         flag = true;

@@ -10,16 +10,16 @@
  */
 package com.mixlc.ip_get.utils;
 
+import org.apache.commons.io.FileUtils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 〈一句话功能简述〉<br> 
@@ -32,10 +32,14 @@ import java.util.Map;
 public class BlackColor {
     private File file;
     private File jpgFile;
+    private boolean testflag = false;
     private Map<BufferedImage,String> trainMap = null;
 
     public BlackColor(File file) {
         this.file = file;
+    }
+
+    public BlackColor() {
     }
 
     public void getJpgFile() throws IOException {
@@ -63,13 +67,70 @@ public class BlackColor {
         String result = "";
         try{
             for (BufferedImage bi : list) {
+                if(testflag){
+                    saveSinglecode(bi);
+                }
+                saveSinglecode1(bi);
                 result += getSingleCharOcr(bi, map);
             }
+            if(testflag){
+                renameFile(result);
+            }
+            renameFile1(result);
         }catch (Exception e){
             result = "0";
         }
 
         return result;
+    }
+    public void saveSinglecode(BufferedImage bi) throws IOException {
+        System.out.println("==========================================");
+        System.out.println("11111111111111111111111");
+        Date date = new Date();
+        Random random = new Random();
+        String preName = String.valueOf(date.getTime()) +"_"+ random.nextInt(47);
+        System.out.println(preName);
+        File file2 = new File(file.getParentFile().getPath()+"\\"+getFileName()+"\\"+preName+".jpg");
+        if(!file2.exists()){
+            file2.mkdirs();
+        }
+        ImageIO.write(bi, "jpeg", file2);
+    }
+    public void saveSinglecode1(BufferedImage bi) throws IOException {
+        System.out.println("==========================================");
+        System.out.println("11111111111111111111111");
+        Date date = new Date();
+        Random random = new Random();
+        String preName = String.valueOf(date.getTime()) +"_"+ random.nextInt(47);
+        System.out.println(preName);
+        File file2 = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a"+"\\"+getFileName()+"\\"+preName+".jpg");
+        if(!file2.exists()){
+            file2.mkdirs();
+        }
+        ImageIO.write(bi, "jpeg", file2);
+    }
+    public String getFileName(){
+        String fileName = this.file.getName();
+        fileName = fileName.substring(0,fileName.indexOf("."));
+        return fileName;
+    }
+    public void renameFile(String result){
+        Date date = new Date();
+        String preName = String.valueOf(date.getTime());
+        File file2 = new File(jpgFile.getParentFile().getPath()+"\\"+getFileName()+"\\"+preName+"_"+result+".gif");
+//        if(!file2.exists()){
+//            file2.mkdirs();
+//        }
+        jpgFile.renameTo(file2);
+    }
+    public void renameFile1(String result) throws IOException {
+        Date date = new Date();
+        String preName = String.valueOf(date.getTime());
+        File file2 = new File("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a"+"\\"+getFileName()+"\\"+preName+"_"+result+".gif");
+//        if(!file2.exists()){
+//            file2.mkdirs();
+//        }
+        FileUtils.copyFile(jpgFile,file2);
     }
     public String getSingleCharOcr(BufferedImage img,
                                    Map<BufferedImage, String> map) {
@@ -165,13 +226,22 @@ public class BlackColor {
                 if (isWhite(img.getRGB(x, y)) != 1) {
                     count++;
                 }
-                if (count >= 3) {
+                if (count >= 2) {
                     end = y;
                     break Label2;
                 }
             }
         }
         return img.getSubimage(0, start, width, end - start + 1);
+    }
+    public static boolean isBlack(int colorInt)
+    {
+        Color color = new Color(colorInt);
+        if (color.getRed() + color.getGreen() + color.getBlue() <= 300)
+        {
+            return true;
+        }
+        return false;
     }
     public BufferedImage removeBackgroud()
             throws Exception {
@@ -187,11 +257,47 @@ public class BlackColor {
                 }
             }
         }
+        for(int y = 1; y < height-1; y++){
+            for(int x = 1; x < width-1; x++){
+                boolean flag = false ;
+                if(isBlack(img.getRGB(x, y))){
+                    //上下均为空去掉
+//                    if(isWhite(img.getRGB(x-1, y))==1 && isWhite(img.getRGB(x+1, y))==1){
+//                        flag = true;
+//                    }
+                    // 上下左右均为空去掉
+//                    if(isWhite(img.getRGB(x, y+1))==1 && isWhite(img.getRGB(x, y-1))==1){
+//                        flag = true;
+//                    }
+                    if(isWhite(img.getRGB(x, y+1))==1 && isWhite(img.getRGB(x, y-1))==1&&isWhite(img.getRGB(x-1, y))==1 && isWhite(img.getRGB(x+1, y))==1){
+                        flag = true;
+                    }
+                    if(flag){
+                        img.setRGB(x,y,-1);
+                    }
+                }
+            }
+        }
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if (isWhite(img.getRGB(x, y))== 1)
+                {
+                    System.out.print(" ");
+                } else
+                {
+                    System.out.print("*");
+                }
+            }
+            System.out.println();
+        }
         return img;
     }
     public int isWhite(int colorInt) {
         Color color = new Color(colorInt);
-        if (color.getRed() + color.getGreen() + color.getBlue() > 100) {
+        if (color.getRed() + color.getGreen() + color.getBlue() > 70) {
             return 1;
         }
         return 0;

@@ -154,7 +154,7 @@ public class IpGet {
            if(file!=null){
                GetCodeByImage getCodeByImage = new GetCodeByImage(file);
                String str =  getCodeByImage.getCode();
-               if(str!=null){
+               if(str!=null&&!"null".equals(str)){
                    code = str;
                }
            }

@@ -33,9 +33,11 @@ public class GetCodeByImage {
         fileToImageBuffer();
         String size = getSizeString();
         if("64_20".equals(size)){
+            System.out.println("blueinput=========================");
             BlueCode blueCode = new BlueCode(file);
             return blueCode.getCode();
         }else if("38_29".equals(size)||"52_29".equals(size)||"66_29".equals(size)||"80_29".equals(size)){
+            System.out.println("balck========================="+size);
             BlackColor blackColor = new BlackColor(file);
             return blackColor.getCode();
         }else{
