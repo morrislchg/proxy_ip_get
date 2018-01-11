@@ -180,11 +180,21 @@ public class BlueCode {
         }
 //        ImageIO.write(binaryBufferedImage, "jpg", new File(destDir, sfile
 //                .getName()));
+        for(int y = 0; y < h; y++){
+            for(int x = 0; x < w; x++){
+                if(y==0||y==h-1||x==0||x==w-1){
+                    binaryBufferedImage.setRGB(x,y,-1);
+                }else{
+                    continue;
+                }
+            }
+        }
         //去除干扰线条
         for(int y = 1; y < h-1; y++){
             for(int x = 1; x < w-1; x++){
                 boolean flag = false ;
                 if(isBlack(binaryBufferedImage.getRGB(x, y))){
+
                     //左右均为空时，去掉此点
                     if(isWhite(binaryBufferedImage.getRGB(x-1, y)) && isWhite(binaryBufferedImage.getRGB(x+1, y))){
                         flag = true;

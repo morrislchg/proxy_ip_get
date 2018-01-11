@@ -80,8 +80,8 @@ public class CheckIp {
 
             //把代理设置到请求配置
             RequestConfig defaultRequestConfig = RequestConfig.custom()
-                    .setProxy(proxy).setConnectTimeout(500).setConnectionRequestTimeout(500)
-                    .setSocketTimeout(500)
+                    .setProxy(proxy).setConnectTimeout(5000).setConnectionRequestTimeout(5000)
+                    .setSocketTimeout(5000)
                     .build();
 
             //实例化CloseableHttpClient对象

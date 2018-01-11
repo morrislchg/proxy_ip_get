@@ -165,7 +165,7 @@ public class ImagePreProcess3 {
 
     public static String getSingleCharOcr(BufferedImage img,
                                           Map<BufferedImage, String> map) {
-        String result = "#";
+        String result = "";
         int width = img.getWidth();
         int height = img.getHeight();
         int min = width * height;

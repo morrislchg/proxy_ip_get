@@ -166,11 +166,11 @@ public class BlackColor {
         int width = souce.getWidth();
         int height = souce.getHeight();
         int bw = width < target.getWidth() ? target.getWidth()/width : width/target.getWidth();
-        if(bw>2){
+        if(bw>=2){
             return false;
         }
-        int hw = height < target.getHeight() ? target.getWidth()/height : height/target.getWidth();
-        if(hw>2){
+        int hw = height < target.getHeight() ? target.getHeight()/height : height/target.getHeight();
+        if(hw>=2){
             return false;
         }
         return true;

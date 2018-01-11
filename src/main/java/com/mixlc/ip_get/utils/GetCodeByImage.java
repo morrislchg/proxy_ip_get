@@ -40,6 +40,10 @@ public class GetCodeByImage {
             System.out.println("balck========================="+size);
             BlackColor blackColor = new BlackColor(file);
             return blackColor.getCode();
+        }else if("80_20".equals(size)){
+            System.out.println("spot========================="+size);
+            SpotCode spotCode = new SpotCode(file);
+            return spotCode.getCode();
         }else{
             return "0";
         }

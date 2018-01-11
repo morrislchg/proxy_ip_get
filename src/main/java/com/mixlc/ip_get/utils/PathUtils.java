@@ -26,6 +26,9 @@ public class PathUtils {
     public static String getBluePath(){
         return getBasePath() + "bluetrain\\";
     }
+    public static String getSpotPath(){
+        return getBasePath() + "spottrain\\";
+    }
     public static String getBlackPath(){
         return getBasePath() + "blacktrain\\";
     }

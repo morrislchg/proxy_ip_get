@@ -65,7 +65,7 @@ public class IpGetTest {
             int i=0;
             for(Map<String,String> map:result){
                 try{
-                    boolean mapresult = CheckIp.checkProxyIpOneByOne(map,"http://www.blogjava.net/zjusuyong/articles/304788.html");
+                    boolean mapresult = CheckIp.checkProxyIpOneByOne(map,"http://www.baidu.com");
                     if(mapresult){
                         i++;
                     }
