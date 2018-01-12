@@ -18,6 +18,7 @@ import com.sun.imageio.plugins.gif.GIFImageReader;
 import com.sun.imageio.plugins.gif.GIFImageReaderSpi;
 import com.sun.imageio.plugins.gif.GIFImageWriter;
 import com.sun.imageio.plugins.gif.GIFImageWriterSpi;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
@@ -65,8 +66,8 @@ public class IpGetTest {
             int i=0;
             for(Map<String,String> map:result){
                 try{
-                    boolean mapresult = CheckIp.checkProxyIpOneByOne(map,"http://www.baidu.com");
-                    if(mapresult){
+                    String mapresult = CheckIp.checkProxyIpOneByOne(map,"http://www.baidu.com");
+                    if(StringUtils.isNoneEmpty(mapresult)){
                         i++;
                     }
                 }catch (Exception e){

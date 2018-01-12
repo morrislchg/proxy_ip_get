@@ -10,6 +10,8 @@
  */
 package com.mixlc.ip_get;
 
+import com.mixlc.ip_get.yundaili.ip_get;
+import com.mixlc.ip_get.zhandaye.IpGet;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -36,6 +38,44 @@ public class MainCaseTest {
             String name = file.getParentFile().getPath();
             System.out.println(name);
             Assert.assertTrue("C:\\Users\\Administrator\\Desktop\\imgs\\66_29_a\\blue".equals(name));
+        }
+    }
+    @Test
+    public void getIp(){
+        zhandaye();
+        yundaili();
+        xcdl();
+        kuaidaili();
+    }
+    public void zhandaye(){
+        String url = "http://ip.zdaye.com/";
+        IpGet ipGet = new IpGet(url);
+        ipGet.getIps();
+    }
+    public void yundaili(){
+        for(int i=1;i<=10;i++){
+            String url = "http://www.ip3366.net/free/?stype=1&page="+i;
+            ip_get ipGet = new ip_get();
+            ipGet.getDomByUrl(url);
+        }
+    }
+    public void xcdl(){
+        for(int i=1;i<6;i++){
+            com.mixlc.ip_get.xicidaili.IpGet ipGet = new com.mixlc.ip_get.xicidaili.IpGet();
+            String url = "http://www.xicidaili.com/nn/"+i;
+            ipGet.getDomByUrl(url);
+        }
+    }
+    public void kuaidaili(){
+        for(int i=1;i<=20;i++){
+            String url = "http://www.kuaidaili.com/free/inha/"+i+"/";
+            com.mixlc.ip_get.kuaidaili.IpGet ipGet = new com.mixlc.ip_get.kuaidaili.IpGet();
+            ipGet.getDomByUrl(url);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -69,7 +69,7 @@ public class CheckIp {
             }
             System.out.format("%s:%s-->%s\n", proxyHost, proxyPort, statusCode);
         }
-    }   public static boolean checkProxyIpOneByOne(Map<String, String> proxyIpMap, String reqUrl) throws IOException {
+    }   public static String checkProxyIpOneByOne(Map<String, String> proxyIpMap, String reqUrl) throws IOException {
 
             String proxyHost = proxyIpMap.get("ip");
             Integer proxyPort = Integer.valueOf(proxyIpMap.get("port"));
@@ -101,9 +101,9 @@ public class CheckIp {
             }
             System.out.format("%s:%s-->%s\n", proxyHost, proxyPort, statusCode);
             if(statusCode==200){
-                return true;
+                return proxyHost+":"+proxyPort;
             }else{
-                return false;
+                return "";
             }
     }
 

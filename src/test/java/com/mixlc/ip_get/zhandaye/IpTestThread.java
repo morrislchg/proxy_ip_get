@@ -48,7 +48,7 @@ public class IpTestThread implements Runnable{
             Map<String,String> map = list.get(i);
             System.out.println(map);
             try{
-                boolean mapresult = CheckIp.checkProxyIpOneByOne(map,"http://www.baidu.com");
+                String mapresult = CheckIp.checkProxyIpOneByOne(map,"http://www.baidu.com");
             }catch (Exception e){
                 e.printStackTrace();
             }

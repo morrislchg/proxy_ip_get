@@ -12,6 +12,7 @@ package com.mixlc.ip_get.zhandaye;
 
 import com.mixlc.ip_get.mysql.MysqlDriver;
 import com.mixlc.ip_get.utils.CheckIp;
+import com.mixlc.ip_get.utils.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import java.util.concurrent.*;
  * @create 2018/1/12 0012
  * @since 1.0.0
  */
-public class IpTestThreadPool implements Callable<Boolean> {
+public class IpTestThreadPool implements Callable<String> {
     Map<String,String> map = new HashMap<String,String>();
 
     public IpTestThreadPool(Map<String, String> map) {
@@ -36,8 +37,8 @@ public class IpTestThreadPool implements Callable<Boolean> {
     }
 
     @Override
-    public Boolean call(){
-        boolean mapresult = false;
+    public String call(){
+        String mapresult = "";
         try{
            mapresult = CheckIp.checkProxyIpOneByOne(map,"http://www.baidu.com");
         }catch (Exception e){
@@ -66,13 +67,14 @@ public class IpTestThreadPool implements Callable<Boolean> {
         pool.shutdown();
         // 获取所有并发任务的运行结果
         int i=0;
+        List<String> list1 = new ArrayList<String>();
         for (Future f : list) {
             // 从Future对象上获取任务的返回值，并输出到控制台
-            boolean fr = (Boolean) f.get();
-            if(fr){
+            String fr = (String) f.get();
+            if(org.apache.commons.lang3.StringUtils.isNoneEmpty(fr)){
                 i++;
+                list1.add(fr);
             }
-            System.out.println(">>>" + fr);
         }
         long end = System.currentTimeMillis();
         double mis = (double)(end - start)/1000.000;
@@ -84,5 +86,6 @@ public class IpTestThreadPool implements Callable<Boolean> {
             ubig = ubig.divide(sbig,4,BigDecimal.ROUND_HALF_UP).multiply(thund);
         }
         System.out.println("共有ip:"+result.size()+"个   有效个数:"+i+"有效率为："+ubig.toString()+"%");
+        System.out.println(list1);
     }
 }
