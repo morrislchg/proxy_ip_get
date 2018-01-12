@@ -86,7 +86,27 @@ public class IpGetTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void testRunable(){
+        String sql = "select t.ip,t.port from ip_address t";
+        MysqlDriver mysqlDriver = new MysqlDriver();
+        try {
+            List<Map<String, String>> result = mysqlDriver.executeQuery(sql);
+            IpTestThread ipTestThread = new IpTestThread(result);
+            Thread thread = new Thread(ipTestThread);
+            thread.setName("检测窗口一=========");
+            Thread thread2 = new Thread(ipTestThread);
+            thread2.setName("检测窗口二=========");
+            Thread thread3 = new Thread(ipTestThread);
+            thread3.setName("检测窗口三=========");
+            thread.start();
+            thread2.start();
+            thread3.start();
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
     @Test
     public void oragnizeImagesBySize(){
         File dir = new File("C:\\Users\\Administrator\\Desktop\\imgs\\");
