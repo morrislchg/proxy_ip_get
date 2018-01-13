@@ -12,9 +12,10 @@ package com.mixlc.ip_get.zhandaye;
 
 import com.mixlc.ip_get.mysql.MysqlDriver;
 import com.mixlc.ip_get.utils.CheckIp;
-import com.mixlc.ip_get.utils.StringUtils;
-
 import java.math.BigDecimal;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -71,7 +72,7 @@ public class IpTestThreadPool implements Callable<String> {
         for (Future f : list) {
             // 从Future对象上获取任务的返回值，并输出到控制台
             String fr = (String) f.get();
-            if(org.apache.commons.lang3.StringUtils.isNoneEmpty(fr)){
+            if(org.apache.commons.lang3.StringUtils.isNotEmpty(fr)){
                 i++;
                 list1.add(fr);
             }
@@ -86,6 +87,56 @@ public class IpTestThreadPool implements Callable<String> {
             ubig = ubig.divide(sbig,4,BigDecimal.ROUND_HALF_UP).multiply(thund);
         }
         System.out.println("共有ip:"+result.size()+"个   有效个数:"+i+"有效率为："+ubig.toString()+"%");
-        System.out.println(list1);
+        for(String singleaddress:list1){
+            String[] array = singleaddress.split(":");
+            Connection connection = mysqlDriver.getConnection();
+            CallableStatement callStmt = null;
+            try {
+                callStmt = connection.prepareCall("{call update_score(?)}");
+                callStmt.setString(1,array[0]);
+                callStmt.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                if(callStmt!=null){
+                    try {
+                        callStmt.close();
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+                if(connection!=null){
+                    try {
+                        connection.close();
+                    } catch (SQLException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+            }
+        }
+
+        Connection connection = mysqlDriver.getConnection();
+        CallableStatement callStmt = null;
+        try {
+            callStmt = connection.prepareCall("{call minus_score()}");
+            callStmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            if(callStmt!=null){
+                try {
+                    callStmt.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            if(connection!=null){
+                try {
+                    connection.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+
+        }
     }
 }

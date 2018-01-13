@@ -38,6 +38,18 @@ public class MysqlDriver {
         }
         return statement;
     }
+    public Connection getConnection(){
+        Connection connection = null;
+        try{
+            Class.forName(Driver);
+            connection = DriverManager.getConnection(url,user,password);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return connection;
+    }
     public void sqlEecute(String sql){
         Statement statement = getStatement();
         try {

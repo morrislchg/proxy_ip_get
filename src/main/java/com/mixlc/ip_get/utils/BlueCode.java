@@ -51,13 +51,13 @@ public class BlueCode {
             if(testflag){
                 saveSinglecode(bi);
             }
-            saveSinglecode1(bi);
+           // saveSinglecode1(bi);
             result += getSingleCharOcr(bi, map);
         }
         if(testflag){
             saveJpg(jpgfile,result);
         }
-        saveJpg1(jpgfile,result);
+     //   saveJpg1(jpgfile,result);
         return result;
     }
     public void saveSinglecode(BufferedImage bi) throws IOException {

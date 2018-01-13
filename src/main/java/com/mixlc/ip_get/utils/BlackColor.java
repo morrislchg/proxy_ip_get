@@ -70,13 +70,13 @@ public class BlackColor {
                 if(testflag){
                     saveSinglecode(bi);
                 }
-                saveSinglecode1(bi);
+            //    saveSinglecode1(bi);
                 result += getSingleCharOcr(bi, map);
             }
             if(testflag){
                 renameFile(result);
             }
-            renameFile1(result);
+         //   renameFile1(result);
         }catch (Exception e){
             result = "0";
         }
@@ -84,8 +84,6 @@ public class BlackColor {
         return result;
     }
     public void saveSinglecode(BufferedImage bi) throws IOException {
-        System.out.println("==========================================");
-        System.out.println("11111111111111111111111");
         Date date = new Date();
         Random random = new Random();
         String preName = String.valueOf(date.getTime()) +"_"+ random.nextInt(47);
@@ -97,8 +95,6 @@ public class BlackColor {
         ImageIO.write(bi, "jpeg", file2);
     }
     public void saveSinglecode1(BufferedImage bi) throws IOException {
-        System.out.println("==========================================");
-        System.out.println("11111111111111111111111");
         Date date = new Date();
         Random random = new Random();
         String preName = String.valueOf(date.getTime()) +"_"+ random.nextInt(47);

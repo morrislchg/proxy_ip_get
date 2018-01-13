@@ -69,7 +69,7 @@ public class CheckIp {
             }
             System.out.format("%s:%s-->%s\n", proxyHost, proxyPort, statusCode);
         }
-    }   public static String checkProxyIpOneByOne(Map<String, String> proxyIpMap, String reqUrl) throws IOException {
+    }   public static String checkProxyIpOneByOne(Map<String, String> proxyIpMap, String reqUrl) {
 
             String proxyHost = proxyIpMap.get("ip");
             Integer proxyPort = Integer.valueOf(proxyIpMap.get("port"));
@@ -91,16 +91,23 @@ public class CheckIp {
             HttpGet httpGet;
             httpGet = new HttpGet(reqUrl);
         //请求返回
-             CloseableHttpResponse httpResp = httpclient.execute(httpGet);
-            try {
-                statusCode = httpResp.getStatusLine().getStatusCode();
-            } catch (Exception e) {
-
-            } finally {
-                httpResp.close();
+        CloseableHttpResponse httpResp = null;
+        try {
+            httpResp = httpclient.execute(httpGet);
+            statusCode = httpResp.getStatusLine().getStatusCode();
+        } catch (IOException e) {
+            System.out.println("检测ip失败");
+        } finally {
+            if(httpResp!=null){
+                try {
+                    httpResp.close();
+                } catch (IOException e) {
+                    System.out.println("关闭连接失败");
+                }
             }
-            System.out.format("%s:%s-->%s\n", proxyHost, proxyPort, statusCode);
+        }
             if(statusCode==200){
+                System.out.format("%s:%s-->%s\n", proxyHost, proxyPort, statusCode);
                 return proxyHost+":"+proxyPort;
             }else{
                 return "";

@@ -52,11 +52,11 @@ public class SpotCode {
         int i=0;
         String result = "";
         for(BufferedImage bufferedImage1:list){
-            saveSinglecode1(bufferedImage1,name.charAt(i));
+        //    saveSinglecode1(bufferedImage1,name.charAt(i));
             result += getSingleCharOcr(bufferedImage1, map);
             i++;
         }
-        saveJpg1(jpgfile, result);
+      //  saveJpg1(jpgfile, result);
         return result;
     }
     public Map<BufferedImage,String> loadTrainData() throws IOException {
@@ -146,8 +146,6 @@ public class SpotCode {
                 colorMax = color;
                 System.out.println(colorMax);
                 Color colorm = new Color(colorMax);
-                System.out.println("red===" + colorm.getRed() + "green===" + colorm.getGreen() + "blue=====" + colorm.getBlue());
-                System.out.println(max);
             }
         }
         for (int x = 0; x < width; x++) {

@@ -112,7 +112,10 @@ public class IpGet {
                 String value = element1.getElementsByTag("img").eq(0).attr("abs:src");
 //                System.out.println("http://ip.zdaye.com/"+value);
                 try {
-                    row.put(key,downloadImages(value));
+                    String port = downloadImages(value);
+                    if(org.apache.commons.lang3.StringUtils.isNotEmpty(port)){
+                        row.put(key,port);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
