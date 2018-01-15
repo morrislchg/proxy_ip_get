@@ -304,12 +304,10 @@ public class GifDecoder {
             if (!err()) {
                 readContents();
                 if (frameCount < 0) {
-                    System.out.println("4444");
                     status = STATUS_FORMAT_ERROR;
                 }
             }
         } else {
-            System.out.println("333");
             status = STATUS_OPEN_ERROR;
         }
         try {
@@ -337,7 +335,6 @@ public class GifDecoder {
             } else {
                 in = new BufferedInputStream(new FileInputStream(name));
             }
-            System.out.println("xxxx");
             status = read(in);
         } catch (IOException e) {
             status = STATUS_OPEN_ERROR;
@@ -503,10 +500,7 @@ public class GifDecoder {
         int curByte = 0;
         try {
             curByte = in.read();
-            System.out.println("kkkkk");
-            System.out.println(curByte);
         } catch (IOException e) {
-            System.out.println("5555");
             status = STATUS_FORMAT_ERROR;
         }
         return curByte;
@@ -539,7 +533,6 @@ public class GifDecoder {
             }
 
             if (n < blockSize) {
-                System.out.println("666");
                 status = STATUS_FORMAT_ERROR;
             }
         }
@@ -562,7 +555,6 @@ public class GifDecoder {
         } catch (IOException e) {
         }
         if (n < nbytes) {
-            System.out.println("7777");
             status = STATUS_FORMAT_ERROR;
         } else {
             tab = new int[256]; // max size to avoid bounds checks
@@ -586,7 +578,6 @@ public class GifDecoder {
         boolean done = false;
         while (!(done || err())) {
             int code = read();
-            System.out.println(code);
             switch (code) {
 
                 case 0x2C : // image separator
@@ -626,7 +617,6 @@ public class GifDecoder {
                     break;
 
                 default :
-                    System.out.println("8888");
                     status = STATUS_FORMAT_ERROR;
             }
         }
@@ -657,7 +647,6 @@ public class GifDecoder {
             id += (char) read();
         }
         if (!id.startsWith("GIF")) {
-            System.out.println("9999");
             status = STATUS_FORMAT_ERROR;
             return;
         }
@@ -700,7 +689,6 @@ public class GifDecoder {
         }
 
         if (act == null) {
-            System.out.println("10000");
             status = STATUS_FORMAT_ERROR; // no color table defined
         }
 

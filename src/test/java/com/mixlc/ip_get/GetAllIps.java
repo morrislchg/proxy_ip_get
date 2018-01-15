@@ -33,9 +33,26 @@ public class GetAllIps {
         Thread xicidaili = new Thread(xiCiDaiLiRunable,"西刺代理===");
         KuaiDaiLiRunable kuaiDaiLiRunable = new KuaiDaiLiRunable();
         Thread kuaidaili = new Thread(kuaiDaiLiRunable,"快代理====");
-        zhandaye.start();;
-        yundaili.start();
-        xicidaili.start();
-        kuaidaili.start();
+        try{
+            zhandaye.start();
+        }catch (Exception e){
+            System.out.println("站大爷网站失败");
+        }    try{
+            yundaili.start();
+        }catch (Exception e){
+            System.out.println("云代理网站失败");
+        }    try{
+            xicidaili.start();
+        }catch (Exception e){
+            System.out.println("西刺代理网站失败");
+        }try{
+            kuaidaili.start();
+        }catch (Exception e){
+            System.out.println("快代理网站失败");
+        }
+
+
+
+
     }
 }

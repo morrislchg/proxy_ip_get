@@ -110,11 +110,12 @@ public class IpGet {
             }else if(i==2){
                 String key = "port";
                 String value = element1.getElementsByTag("img").eq(0).attr("abs:src");
-//                System.out.println("http://ip.zdaye.com/"+value);
                 try {
                     String port = downloadImages(value);
                     if(org.apache.commons.lang3.StringUtils.isNotEmpty(port)){
                         row.put(key,port);
+                    }else{
+                        row.put(key,"0");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -148,7 +149,9 @@ public class IpGet {
         try {
             response = conn.execute();
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("下载验证码图片超时");
+           // e.printStackTrace();
+            return "0";
         }
         byte[] img = response.bodyAsBytes();
        // byteToImage(img,"C:\\Users\\Administrator\\Desktop\\imgs\\"+getNameByPath(url));
